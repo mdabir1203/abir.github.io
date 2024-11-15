@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      background-color: #000;
+      color: #00ff00;
+      font-family: 'Courier New', monospace;
+      padding: 20px;
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .cursor {
+      animation: blink 1s infinite;
+      display: inline-block;
+      width: 10px;
+      height: 20px;
+      background: #00ff00;
+      margin-left: 5px;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    .command {
+      color: #00ff00;
+      margin-bottom: 10px;
+    }
+
+    .response {
+      color: #00cc00;
+      margin-left: 20px;
+      margin-bottom: 20px;
+    }
+
+    .highlight {
+      color: #ffff00;
+    }
+
+    .menu-item {
+      cursor: pointer;
+      padding: 5px;
+    }
+
+    .menu-item:hover {
+      background-color: #003300;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="command">C:\> dir</div>
+    <div class="response">
+      Volume in drive C is ABIR_CV
+      Volume Serial Number is 1203-2024
+    </div>
+
+    <div class="command">C:\> type PROFILE.TXT</div>
+    <div class="response">
+      <div class="highlight">=== MOHAMMAD ABIR ABBAS ===</div>
+      Software developer with 2+ years of experience in AI solutions
+      Location: Panchlaish, Chittagong
+      Contact: md.abir1203@gmail.com | +880 1841603542
+    </div>
+
+    <div class="command">C:\> type SKILLS.DAT</div>
+    <div class="response">
+      LANGUAGES:
+      - Python
+      - Rust
+
+      FRAMEWORKS:
+      - PyTorch
+      - Langchain
+
+      SOFT_SKILLS:
+      - Leadership
+      - Critical Thinking
+      - Public Speaking
+    </div>
+
+    <div class="command">C:\> type EXPERIENCE.LOG</div>
+    <div class="response">
+      [CURRENT] 42 Wolfsburg - Software Engineering
+      [2020] Data Miner - Fieldsports GmbH Hannover
+      * Analyzed 3000+ data points
+      * Developed Python scraping tool (50% faster)
+    </div>
+
+    <div class="command">C:\> type PROJECTS.BAT</div>
+    <div class="response">
+      1. AI Cybersecurity Toolkit
+      2. RedAGPT - Redis Hackathon Winner
+      3. AUDI Kreathon 2023 Contributor
+    </div>
+
+    <div class="command">C:\> type EDUCATION.SYS</div>
+    <div class="response">
+      [2022-Present] Software Engineering - 42 Wolfsburg
+      [2013-2017] B.Sc Mechanical Engineering
+      Chittagong University of Engineering and Technology
+      CGPA: 3.16 (German Grade: 2.4)
+    </div>
+
+    <div class="command">C:\> type INTERESTS.TXT</div>
+    <div class="response">
+      HOBBIES:
+      - Harmonica
+      - Yoga
+      - Reading
+
+      LANGUAGES:
+      - English (Fluent)
+      - German (Intermediate)
+    </div>
+
+    <div class="command">C:\> _<span class="cursor"></span></div>
+  </div>
+</body>
+</html>
