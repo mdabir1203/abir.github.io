@@ -2,27 +2,83 @@
 <html>
 <head>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
     body {
-      background-color: #000;
-      color: #00ff00;
-      font-family: 'Courier New', monospace;
+      background-color: #121212;
+      color: #8bc34a;
+      font-family: 'Press Start 2P', monospace;
       padding: 20px;
       line-height: 1.6;
       margin: 0;
     }
 
-    .container {
+    .terminal {
       max-width: 800px;
-      margin: 0 auto;
+      margin: 20px auto;
+      background-color: #000;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    }
+
+    .terminal-header {
+      background: linear-gradient(to right, #333, #111);
+      padding: 10px;
+      border-radius: 10px 10px 0 0;
+      margin: -20px -20px 20px -20px;
+      text-align: center;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .prompt {
+      color: #8bc34a;
+      margin-bottom: 10px;
+    }
+
+    .user {
+      color: #ffc107;
+    }
+
+    .hostname {
+      color: #03a9f4;
+    }
+
+    .directory {
+      color: #e91e63;
+    }
+
+    .command-input {
+      background: transparent;
+      border: none;
+      color: #8bc34a;
+      font-family: inherit;
+      font-size: inherit;
+      width: 80%;
+      outline: none;
+      margin-left: 5px;
+    }
+
+    .output {
+      color: #8bc34a;
+      margin-left: 10px;
+      margin-bottom: 20px;
+      white-space: pre-wrap;
+    }
+
+    .hidden {
+      display: none;
     }
 
     .cursor {
       animation: blink 1s infinite;
       display: inline-block;
-      width: 10px;
-      height: 20px;
-      background: #00ff00;
+      width: 8px;
+      height: 16px;
+      background: #8bc34a;
       margin-left: 5px;
+      vertical-align: middle;
     }
 
     @keyframes blink {
@@ -30,99 +86,202 @@
       50% { opacity: 0; }
     }
 
-    .command {
-      color: #00ff00;
-      margin-bottom: 10px;
+    .help-text {
+      color: #999;
+      font-style: italic;
     }
 
-    .response {
-      color: #00cc00;
-      margin-left: 20px;
-      margin-bottom: 20px;
+    .error {
+      color: #ff5555;
+    }
+
+    .success {
+      color: #8bc34a;
     }
 
     .highlight {
-      color: #ffff00;
-    }
-
-    .menu-item {
-      cursor: pointer;
-      padding: 5px;
-    }
-
-    .menu-item:hover {
-      background-color: #003300;
+      color: #ffc107;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="command">C:\> dir</div>
-    <div class="response">
-      Volume in drive C is ABIR_CV
-      Volume Serial Number is 1203-2024
+  <div class="terminal">
+    <div class="terminal-header">Mohammad Abir Abbas - Retro CV</div>
+    <div id="terminal-content">
+      <div class="output">This is me Pitching! Bring whatever Positions you have !! Type 'help' to see available commands.</div>
+      <div id="command-history"></div>
+      <div class="prompt">
+        <span class="user">abir</span>@<span class="hostname">portfolio</span>:<span class="directory">~</span>$ <input type="text" class="command-input" id="command-input" autofocus>
+      </div>
     </div>
-
-    <div class="command">C:\> type PROFILE.TXT</div>
-    <div class="response">
-      <div class="highlight">=== MOHAMMAD ABIR ABBAS ===</div>
-      Software developer with 2+ years of experience in AI solutions
-      Location: Panchlaish, Chittagong
-      Contact: md.abir1203@gmail.com | +880 1841603542
-    </div>
-
-    <div class="command">C:\> type SKILLS.DAT</div>
-    <div class="response">
-      LANGUAGES:
-      - Python
-      - Rust
-
-      FRAMEWORKS:
-      - PyTorch
-      - Langchain
-
-      SOFT_SKILLS:
-      - Leadership
-      - Critical Thinking
-      - Public Speaking
-    </div>
-
-    <div class="command">C:\> type EXPERIENCE.LOG</div>
-    <div class="response">
-      [CURRENT] 42 Wolfsburg - Software Engineering
-      [2020] Data Miner - Fieldsports GmbH Hannover
-      * Analyzed 3000+ data points
-      * Developed Python scraping tool (50% faster)
-    </div>
-
-    <div class="command">C:\> type PROJECTS.BAT</div>
-    <div class="response">
-      1. AI Cybersecurity Toolkit
-      2. RedAGPT - Redis Hackathon Winner
-      3. AUDI Kreathon 2023 Contributor
-    </div>
-
-    <div class="command">C:\> type EDUCATION.SYS</div>
-    <div class="response">
-      [2022-Present] Software Engineering - 42 Wolfsburg
-      [2013-2017] B.Sc Mechanical Engineering
-      Chittagong University of Engineering and Technology
-      CGPA: 3.16 (German Grade: 2.4)
-    </div>
-
-    <div class="command">C:\> type INTERESTS.TXT</div>
-    <div class="response">
-      HOBBIES:
-      - Harmonica
-      - Yoga
-      - Reading
-
-      LANGUAGES:
-      - English (Fluent)
-      - German (Intermediate)
-    </div>
-
-    <div class="command">C:\> _<span class="cursor"></span></div>
   </div>
+
+  <script>
+    const commandHistory = document.getElementById('command-history');
+    const commandInput = document.getElementById('command-input');
+
+    const data = {
+      profile: `Full Name: Mohammad Abir Abbas
+Location: Chattogram, Bangladesh
+Contact:
+- Phone: +8801841603542
+- Email: md.abir1203@gmail.com
+- LinkedIn: www.linkedin.com/in/abir-abbas
+- Portfolio: linktr.ee/uknowWhoAb1r
+
+Top Skills:
+- Start-up Leadership
+- Start-up Ventures
+- Rust Jobs
+
+Languages:
+- Bengali (Native or Bilingual)
+- German (Goethe Zertifikat A2) (Elementary)
+- English (IELTS 7.5) (Native or Bilingual)
+
+Certifications:
+- Docker Training Course for the Absolute Beginner
+- Langchain x Autonomous GPT Agents Hackathon Certificate
+- Jira Fundamentals Badge
+- Master In-Demand Professional Soft Skills
+- Leading with a Growth Mindset
+
+Honors and Awards:
+- Certificate of Proficiency in Digital Competence
+- Goethe A2 Certification
+- Wolfsburg Homie Certificate of Appreciation
+- Certificate of Achievement
+
+Summary:
+"Precision Engineering, Visionary Innovation - Ignite Your Tech Ascent`,
+
+      experience: `Experience:
+Deep Blue Digital (Co-Founder) - September 2024 to Present
+- Explore our established digital goods marketplace
+- Instant access to all purchases
+- Seller-friendly environment with global visibility
+- Secure transactions
+- Wide range of digital products
+Techstack: Wordpress, CMS
+Newest Addition: PC Web App
+
+HNM IT Solutions (IT Support Technician) - October 2023 to January 2024
+- Update router software to enhance security, improve functionality, and ensure compatibility
+- Troubleshoot network issues using diagnostics and verifying configurations
+- Systematically eliminate potential sources of network problems
+
+MTC (AV Hannover Messe) - April 2023 to April 2023
+- Spearheaded kitchen operations, crafting diverse dishes while prioritizing quality and safety
+- Demonstrated teamwork & time management excellence in a fast-paced environment, boosting customer service & culinary standards
+
+Fieldsports GmbH (Data Miner) - July 2020 to October 2020
+- Mined 3,000 travel contacts & info using Python (Beautiful Soup & HTML), launching a travel website!`,
+
+      education: `Education:
+42 Wolfsburg (Computer Software Engineering, Peer Programming on C and C++) - April 2022 to July 2024
+Chittagong University of Engineering & Technology (Bachelor's degree, Mechanical Engineering) - 2013 to 2017
+Dhaka College (HSC) - 2010 to 2012
+Chittagong Collegiate School (SSC) - 2005 to 2010
+42 The Network - 2022 to 2024`
+    };
+
+    const commands = {
+      help: 'Available commands:\n' +
+            'profile   - Display personal information\n' +
+            'skills    - List technical and soft skills\n' +
+            'exp       - Show work experience\n' +
+            'certs     - View certifications\n' +
+            'awards    - Show honors and awards\n' +
+            'summary   - Display personal summary\n' +
+            'edu       - Show educational background\n' +
+            'clear    - Clear the terminal\n' +
+            'contact   - Show contact information\n' +
+            'ls       - List all available commands\n' +
+            'whoami   - Display current user info',
+      
+      ls: 'profile  skills  exp  certs  awards  summary  edu  contact',
+      whoami: 'abir - AI Developer | Rust | Creator of Rusty',
+      contact: `Contact Information:
+- Phone: +8801841603542
+- Email: md.abir1203@gmail.com
+- LinkedIn: www.linkedin.com/in/abir-abbas
+- Portfolio: linktr.ee/uknowWhoAb1r`
+    };
+
+    function addToHistory(command, output, isError = false) {
+      const promptHtml = `<div class="prompt"><span class="user">abir</span>@<span class="hostname">portfolio</span>:<span class="directory">~</span>$ ${command}</div>`;
+      const outputHtml = `<div class="output ${isError ? 'error' : ''}">${output}</div>`;
+      commandHistory.innerHTML += promptHtml + outputHtml;
+    }
+
+    function handleCommand(command) {
+      const cmd = command.toLowerCase().trim();
+      
+      if (cmd === '') return;
+      
+      let output;
+      switch(cmd) {
+        case 'help':
+          output = commands.help;
+          break;
+        case 'profile':
+          output = data.profile;
+          break;
+        case 'skills':
+          output = data.profile.split('\n\nTop Skills:')[1];
+          break;
+        case 'exp':
+          output = data.experience;
+          break;
+        case 'certs':
+          output = data.profile.split('\n\nCertifications:')[1];
+          break;
+        case 'awards':
+          output = data.profile.split('\n\nHonors and Awards:')[1];
+          break;
+        case 'summary':
+          output = data.profile.split('\n\nSummary:')[1];
+          break;
+        case 'edu':
+          output = data.education;
+          break;
+        case 'clear':
+          commandHistory.innerHTML = '';
+          return;
+        case 'ls':
+          output = commands.ls;
+          break;
+        case 'whoami':
+          output = commands.whoami;
+          break;
+        case 'contact':
+          output = commands.contact;
+          break;
+        default:
+          output = `Command not found: ${cmd}. Type 'help' for available commands.`;
+          addToHistory(command, output, true);
+          return;
+      }
+      
+      addToHistory(command, output);
+    }
+
+    commandInput.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        const command = this.value;
+        handleCommand(command);
+        this.value = '';
+        window.scrollTo(0, document.body.scrollHeight);
+      }
+    });
+
+    // Auto-focus input when clicking anywhere in the terminal
+    document.querySelector('.terminal').addEventListener('click', function() {
+      commandInput.focus();
+    });
+
+    // Initial help message
+    addToHistory('help', commands.help);
+  </script>
 </body>
 </html>
