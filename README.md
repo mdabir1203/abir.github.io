@@ -63,4 +63,4 @@ https://github.com/user-attachments/assets/a13d190f-e653-48b5-b72f-b2a060484554
 
 Conclusion:
 
-By the end of this guide, you should be able to build your own interactive CV or similar applications, understanding the integration of HTML for structure, CSS for style, and JavaScript for interactivity.****
+By the end of this guide, one should be able to build their own interactive CV or similar applications, understanding the integration of HTML for structure, CSS for style, and JavaScript for interactivity.****
