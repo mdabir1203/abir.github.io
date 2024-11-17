@@ -11,10 +11,10 @@ Learning Objectives:
 1. HTML Setup
 
     Structure: The HTML sets up a basic structure with a div for the terminal. Key elements include:
-        .terminal-header for the title bar.
-        .terminal for the main terminal body.
-        #command-history to display previous commands and outputs.
-        .command-input for user input.
+        `.terminal-header` for the title bar.
+        `.terminal` for the main terminal body.
+        `#command-history` to display previous commands and outputs.
+        `.command-input` for user input.
 
 2. CSS Styling
 
