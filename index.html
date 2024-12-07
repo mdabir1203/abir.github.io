@@ -20,6 +20,7 @@
       padding: 20px;
       border-radius: 10px;
       box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+      cursor: text;
     }
 
     .terminal-header {
@@ -58,6 +59,9 @@
       width: 80%;
       outline: none;
       margin-left: 5px;
+      cursor: text;
+      line-height: 1.6; /* Adjust line height to prevent overlap */
+      padding: 2px;
     }
 
     .output {
@@ -108,10 +112,11 @@
   <div class="terminal">
     <div class="terminal-header">Mohammad Abir Abbas - Retro CV</div>
     <div id="terminal-content">
-      <div class="output">This is me Pitching! Bring whatever Positions you have !! Type 'help' to see available commands.</div>
+      <div class="output">Welcome to my portfolio! I am eager to explore potential opportunities. Please type 'help' to see the available commands. Type 'help' to see available commands.</div>
       <div id="command-history"></div>
       <div class="prompt">
         <span class="user">abir</span>@<span class="hostname">portfolio</span>:<span class="directory">~</span>$ <input type="text" class="command-input" id="command-input" autofocus>
+      <!-- <button id="clear-button">Clear</button> Clear button added -->
       </div>
     </div>
   </div>
@@ -152,8 +157,7 @@ Honors and Awards:
 - Wolfsburg Homie Certificate of Appreciation
 - Certificate of Achievement
 
-Summary:
-"Precision Engineering, Visionary Innovation - Ignite Your Tech Ascent`,
+    `,
 
       experience: `Experience:
 Deep Blue Digital (Co-Founder) - September 2024 to Present
@@ -192,20 +196,20 @@ Chittagong Collegiate School (SSC) - 2005 to 2010
             'exp       - Show work experience\n' +
             'certs     - View certifications\n' +
             'awards    - Show honors and awards\n' +
-            'summary   - Display personal summary\n' +
+            'motto     - Display personal motto\n' + // Updated to include motto
             'edu       - Show educational background\n' +
-            'clear    - Clear the terminal\n' +
+            'clear     - Clear the terminal\n' + // Updated to include clear
             'contact   - Show contact information\n' +
-            'ls       - List all available commands\n' +
-            'whoami   - Display current user info',
+            'ls        - List all available commands\n' +
+            'whoami    - Display current user info',
       
-      ls: 'profile  skills  exp  certs  awards  summary  edu  contact',
+      ls: 'profile  skills  exp  certs  awards  motto  edu  contact', // Updated to include motto
       whoami: 'abir - AI Developer | Rust | Creator of Rusty',
       contact: `Contact Information:
-- Phone: +8801841603542
-- Email: md.abir1203@gmail.com
-- LinkedIn: www.linkedin.com/in/abir-abbas
-- Portfolio: linktr.ee/uknowWhoAb1r`
+      - Phone: <a href="tel:+8801841603542">+8801841603542</a>
+      - Email: <a href="mailto:md.abir1203@gmail.com">md.abir1203@gmail.com</a>
+      - LinkedIn: <a href="https://www.linkedin.com/in/abir-abbas" target="_blank">www.linkedin.com/in/abir-abbas</a>
+      - Portfolio: <a href="https://linktr.ee/uknowWhoAb1r" target="_blank">linktr.ee/uknowWhoAb1r</a>` // Updated to include links
     };
 
     function addToHistory(command, output, isError = false) {
@@ -237,10 +241,10 @@ Chittagong Collegiate School (SSC) - 2005 to 2010
           output = data.profile.split('\n\nCertifications:')[1];
           break;
         case 'awards':
-          output = data.profile.split('\n\nHonors and Awards:')[1];
+          output = data.profile.split('\n\nHonors and Awards:')[1]; // {{ edit_1 }}
           break;
-        case 'summary':
-          output = data.profile.split('\n\nSummary:')[1];
+        case 'motto': // Added motto command
+          output = "Precision Engineering, Visionary Innovation - Ignite Your Tech Ascent";
           break;
         case 'edu':
           output = data.education;
@@ -279,6 +283,11 @@ Chittagong Collegiate School (SSC) - 2005 to 2010
     document.querySelector('.terminal').addEventListener('click', function() {
       commandInput.focus();
     });
+
+    // // Add event listener for the clear button
+    // document.getElementById('clear-button').addEventListener('click', function() {
+    //   commandHistory.innerHTML = '';
+    // });
 
     // Initial help message
     addToHistory('help', commands.help);
