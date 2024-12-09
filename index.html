@@ -1,6 +1,22 @@
 <!DOCTYPE html>
 <html>
 <head>
+
+    <meta http-equiv="Content-Security-Policy" 
+    content="default-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com https://api.rss2json.com;
+    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+    script-src 'self' 'unsafe-inline';
+    img-src 'self' https: data:;
+    font-src 'self' https://fonts.gstatic.com;">
+
+      
+    <!-- Prevent clickjacking -->
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    
+    <!-- Prevent MIME type sniffing -->
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    
+  
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
@@ -127,7 +143,7 @@
     </div>
   </div>
 
-  <script>
+  <script >
     const commandHistory = document.getElementById('command-history');
     const commandInput = document.getElementById('command-input');
 
@@ -219,14 +235,27 @@ Chittagong Collegiate School (SSC) - 2005 to 2010
       - Portfolio: <a href="https://linktr.ee/uknowWhoAb1r" target="_blank">linktr.ee/uknowWhoAb1r</a>` // Updated to include links
     };
 
+        // Add input sanitization function
+    function sanitizeInput(input) {
+        return input.replace(/[<>]/g, '').slice(0, 100); // Limit input length to 100 chars
+    }
+
+    function sanitizeOutput(output) {
+        // Basic sanitization for output
+        if (typeof output !== 'string') return '';
+        return output.replace(/<(?!\/?(a|p|ul|li)\b)[^>]+>/gi, '');
+    }
+
     function addToHistory(command, output, isError = false) {
+      const sanitizedCommand = sanitizeInput(command);
+      const sanitizedOutput = sanitizeOutput(output);
       const promptHtml = `<div class="prompt"><span class="user">abir</span>@<span class="hostname">portfolio</span>:<span class="directory">~</span>$ ${command}</div>`;
       const outputHtml = `<div class="output ${isError ? 'error' : ''}">${output}</div>`;
       commandHistory.innerHTML += promptHtml + outputHtml;
     }
 
     function handleCommand(command) {
-      const cmd = command.toLowerCase().trim();
+        const cmd = sanitizeInput(command.toLowerCase().trim());
       
       if (cmd === '') return;
       
@@ -289,25 +318,55 @@ Chittagong Collegiate School (SSC) - 2005 to 2010
       // Replace 'uknowWhoAb1r' with your Medium username
       const mediumFeedUrl = 'https://medium.com/feed/@md.abir1203';
 
-      fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(mediumFeedUrl)}`)
-        .then(response => response.json())
-        .then(data => {
-          if (data.status === 'ok') {
-            let postsHtml = '<ul>';
-            data.items.forEach(item => {
-              postsHtml += `<li><a href="${item.link}" target="_blank">${item.title}</a></li>`;
-            });
-            postsHtml += '</ul>';
-            blogOutput.innerHTML = postsHtml;
-          } else {
-            blogOutput.innerHTML = '<p>Failed to load blog posts.</p>';
-          }
-        })
-        .catch(error => {
-          blogOutput.innerHTML = `<p>Error loading blog posts: ${error.message}</p>`;
-        });
-    }
+      
+    // Add timeout to fetch
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000);
 
+
+    fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(mediumFeedUrl)}`, {
+      signal: controller.signal,
+      headers: {
+        'Accept': 'application/json'
+      }
+    })
+      .then(response => {
+        if (!response.ok) throw new Error('Network response was not ok');
+        return response.json();
+      })
+      .then(data => {
+        clearTimeout(timeoutId);
+        if (data.status === 'ok' && Array.isArray(data.items)) {
+          let postsHtml = '<ul>';
+          data.items.slice(0, 5).forEach(item => { // Limit to 5 posts
+            const sanitizedTitle = sanitizeOutput(item.title);
+            const sanitizedLink = encodeURI(item.link);
+            postsHtml += `<li><a href="${sanitizedLink}" target="_blank" rel="noopener noreferrer">${sanitizedTitle}</a></li>`;
+          });
+          postsHtml += '</ul>';
+          blogOutput.innerHTML = postsHtml;
+        } else {
+          throw new Error('Invalid data format');
+        }
+      })
+      .catch(error => {
+        clearTimeout(timeoutId);
+        blogOutput.innerHTML = `<p class="error">Error loading blog posts. Please try again later.</p>`;
+        console.error('Blog loading error:', error);
+      });
+  }
+
+  // Add rate limiting for commands
+  const rateLimiter = {
+    lastCommand: 0,
+    minDelay: 500, // milliseconds
+    check: function() {
+      const now = Date.now();
+      if (now - this.lastCommand < this.minDelay) return false;
+      this.lastCommand = now;
+      return true;
+    }
+  };
     commandInput.addEventListener('keypress', function(e) {
       if (e.key === 'Enter') {
         const command = this.value;
