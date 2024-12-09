@@ -60,7 +60,7 @@
       outline: none;
       margin-left: 5px;
       cursor: text;
-      line-height: 1.6; /* Adjust line height to prevent overlap */
+      line-height: 1.6;
       padding: 2px;
     }
 
@@ -116,8 +116,14 @@
       <div id="command-history"></div>
       <div class="prompt">
         <span class="user">abir</span>@<span class="hostname">portfolio</span>:<span class="directory">~</span>$ <input type="text" class="command-input" id="command-input" autofocus>
-      <!-- <button id="clear-button">Clear</button> Clear button added -->
       </div>
+    </div>
+  </div>
+
+  <div id="blog-section" class="hidden">
+    <div class="terminal-header">My Blog</div>
+    <div class="output" id="blog-output">
+      <p>Loading blog posts...</p>
     </div>
   </div>
 
@@ -200,10 +206,11 @@ Chittagong Collegiate School (SSC) - 2005 to 2010
             'edu       - Show educational background\n' +
             'clear     - Clear the terminal\n' + // Updated to include clear
             'contact   - Show contact information\n' +
+            'blog      - View latest blog\n' +
             'ls        - List all available commands\n' +
             'whoami    - Display current user info',
       
-      ls: 'profile  skills  exp  certs  awards  motto  edu  contact', // Updated to include motto
+      ls: 'profile  skills  exp  certs  awards  motto  edu blog contact', // Updated to include motto
       whoami: 'abir - AI Developer | Rust | Creator of Rusty',
       contact: `Contact Information:
       - Phone: <a href="tel:+8801841603542">+8801841603542</a>
@@ -251,6 +258,7 @@ Chittagong Collegiate School (SSC) - 2005 to 2010
           break;
         case 'clear':
           commandHistory.innerHTML = '';
+          document.getElementById('blog-section').classList.add('hidden');
           return;
         case 'ls':
           output = commands.ls;
@@ -261,6 +269,10 @@ Chittagong Collegiate School (SSC) - 2005 to 2010
         case 'contact':
           output = commands.contact;
           break;
+        case 'blog':
+          document.getElementById('blog-section').classList.remove('hidden');
+          loadBlogPosts();
+          return;
         default:
           output = `Command not found: ${cmd}. Type 'help' for available commands.`;
           addToHistory(command, output, true);
@@ -268,6 +280,32 @@ Chittagong Collegiate School (SSC) - 2005 to 2010
       }
       
       addToHistory(command, output);
+    }
+
+    function loadBlogPosts() {
+      const blogOutput = document.getElementById('blog-output');
+      blogOutput.innerHTML = '<p>Loading blog posts...</p>';
+
+      // Replace 'uknowWhoAb1r' with your Medium username
+      const mediumFeedUrl = 'https://medium.com/feed/@md.abir1203';
+
+      fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(mediumFeedUrl)}`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.status === 'ok') {
+            let postsHtml = '<ul>';
+            data.items.forEach(item => {
+              postsHtml += `<li><a href="${item.link}" target="_blank">${item.title}</a></li>`;
+            });
+            postsHtml += '</ul>';
+            blogOutput.innerHTML = postsHtml;
+          } else {
+            blogOutput.innerHTML = '<p>Failed to load blog posts.</p>';
+          }
+        })
+        .catch(error => {
+          blogOutput.innerHTML = `<p>Error loading blog posts: ${error.message}</p>`;
+        });
     }
 
     commandInput.addEventListener('keypress', function(e) {
